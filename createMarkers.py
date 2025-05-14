@@ -4,7 +4,7 @@ import os
 
 #params
 output_folder = 'markers'
-marker_ids = [0, 1,2]  #idk how many do we want?
+marker_ids = [0, 1,2,4]  #idk how many do we want?
 marker_size = 200
 dictionary = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
 
