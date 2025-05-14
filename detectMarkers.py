@@ -1,5 +1,6 @@
 import cv2
 import cv2.aruco as aruco
+import numpy as np
 
 #id naar name mapping
 marker_names = {
@@ -32,3 +33,5 @@ def draw_markers(frame, detections):
         cv2.putText(frame, marker['name'], tuple(marker['polygon'][0]),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
+def marker_center(polygon):
+    return np.mean(polygon, axis=0).astype(int)

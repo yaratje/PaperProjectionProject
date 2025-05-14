@@ -3,6 +3,8 @@ from detectMarkers import detect_markers, draw_markers
 from dectectHand import detect_hand_and_index, point_inside_polygon
 
 
+last_seen_markers = {}
+
 #auto vind een werkende camera backup
 def find_working_camera(max_id=5):
     for cam_id in range(max_id):
@@ -29,8 +31,13 @@ while True:
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 
-    # Detect markers
+    
     markers = detect_markers(gray)
+    if markers:
+        last_seen_markers = {m['id']: m for m in markers}
+    else:
+    #last seen
+        markers = list(last_seen_markers.values())
     draw_markers(frame, markers)
 
     # Detect hand
