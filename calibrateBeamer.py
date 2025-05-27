@@ -11,9 +11,9 @@ from screeninfo import get_monitors
 def get_projector_points(width, height):
     margin = 100
     return np.array([
-[margin, margin]                    # Top-left
-[width - margin, margin]           # Top-right
-[width - margin, height - margin] # Bottom-right
+[margin, margin],                    # Top-left
+[width - margin, margin],           # Top-right
+[width - margin, height - margin], # Bottom-right
 [margin, height - margin]         # Bottom-left
     ], dtype=np.float32)
 
