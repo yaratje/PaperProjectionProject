@@ -1,9 +1,11 @@
 import cv2
 import numpy as np
-from screeninfo import get_monitors
+
 from smartWatchSignal import databse_setup, trigger_alert
 from dectectHand import detect_hand_and_index, point_inside_polygon
+from navigation import get_nav, get_projector_screen
 import time
+
 
 databse_setup()
 
@@ -35,9 +37,7 @@ button_bob_polygon = [
 last_trigger_time = 0
 COOLDOWN = 20  # seconds
 
-def get_projector_screen():
-    monitors = get_monitors()
-    return monitors[-1]
+
 
 projector = get_projector_screen()
 proj_w, proj_h = projector.width, projector.height
@@ -119,7 +119,8 @@ while True:
             # Marker not seen this frame, decrease lifetime
             last_seen_markers[marker_id]["frames_left"] -= 1
 
-    projector_img = np.zeros((proj_h, proj_w, 3), dtype=np.uint8)
+    #projector_img = np.zeros((proj_h, proj_w, 3), dtype=np.uint8)
+    projector_img = get_nav()
     button_user123_polygon = make_button_polygon(proj_w, proj_h, right_margin_ratio=0.05, top_margin_ratio=0.05)
     button_bob_polygon = make_button_polygon(proj_w, proj_h, right_margin_ratio=0.05, top_margin_ratio=0.05 + 0.1)  # 10% lower on screen
     
