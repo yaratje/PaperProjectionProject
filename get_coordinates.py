@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Load your image
-image_path = 'nav/machine1_1.png'
+image_path = 'nav/machine1_1_1.png'
 img = cv2.imread(image_path)
 if img is None:
     raise FileNotFoundError(f"Could not load image at {image_path}")

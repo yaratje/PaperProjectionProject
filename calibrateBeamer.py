@@ -65,7 +65,7 @@ def main():
     cv2.imshow(win_name, projected_image)
     print("Projecting points")
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(0)
 
     while True:
         ret, frame = cap.read()

@@ -3,7 +3,7 @@ import numpy as np
 import time
 
 from smartWatchSignal import databse_setup, trigger_alert
-from dectectHand import detect_hand_and_index, point_inside_polygon
+from dectectHand import detect_hand_and_gesture, point_inside_polygon
 from navigation_config import NAV_CONFIG          # <— import our data‐driven config
 from navigation import get_projector_screen         # unchanged
 # (Note: you’ll want to rename your original get_nav to something else, 
@@ -26,7 +26,12 @@ last_trigger_time = 0
 COOLDOWN = 0.3   # you can tune this if you want very fast nav
 
 # Start “current screen” on “main”
-current_screen_key = "main"
+current_screen_key = "main_1_1"
+debug_window_name = "Debug View"
+
+abs_polygons = []
+screen_cfg = None
+
 
 projector = get_projector_screen()
 proj_w, proj_h = projector.width, projector.height
@@ -64,6 +69,29 @@ def draw_region(frame, polygon_abs, label):
     cv2.putText(frame, label, (cx - len(label)*6, cy + 5),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
+
+
+prev_hand_state = "unknown"
+click_triggered = False
+
+def on_debug_click(event, x, y, flags, param):
+    global current_screen_key, last_trigger_time
+    if event == cv2.EVENT_LBUTTONDOWN:
+        # abs_polygons must be accessible here too; we'll pass it via `param`
+        
+        for (poly_abs, target_screen) in abs_polygons:
+            if point_inside_polygon((x, y), poly_abs):
+                print(f"[DEBUG] Mouse clicked: {current_screen_key} → {target_screen}")
+                current_screen_key = target_screen
+                last_trigger_time = time.time()
+                break
+
+
+cv2.namedWindow(debug_window_name)
+
+cv2.setMouseCallback(debug_window_name, on_debug_click)
+
+
 while True:
     ret, frame = cap.read()
     if not ret:
@@ -75,7 +103,12 @@ while True:
     corners, ids, _ = detector.detectMarkers(gray)
 
     seen_ids = set()
-    index_finger, is_pointing = detect_hand_and_index(rgb, frame)
+    pinch, is_pointing, hand_state = detect_hand_and_gesture(rgb, frame)
+
+    click_triggered = False
+    if prev_hand_state == "open" and hand_state == "closed":
+        click_triggered = True
+    prev_hand_state = hand_state
 
     # Update your ArUco cache (last_seen_markers) exactly as you already do...
     if ids is not None:
@@ -132,28 +165,55 @@ while True:
         cv2.putText(projector_img, label, (center[0] - 30, center[1] + 5),
                     cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
 
-    # 5) Check pointing & navigation
-    if is_pointing and index_finger is not None:
-        # Map the camera‐space finger to projector coords
-        index_proj = cv2.perspectiveTransform(
-            np.array([[index_finger]], dtype=np.float32), H
-        )[0, 0]
-        ix, iy = int(index_proj[0]), int(index_proj[1])
 
-        # First: check if we hit any region on the CURRENT screen
+    cv2.setMouseCallback(debug_window_name, on_debug_click, param=(abs_polygons, screen_cfg))
+
+
+    # 5) Check pointing & navigation
+    print(click_triggered, hand_state, pinch)
+    if click_triggered and pinch is not None:
+        # 1) Map pinch center to projector coords
+        pinch_proj = cv2.perspectiveTransform(
+            np.array([[pinch]], dtype=np.float32), H
+        )[0,0].astype(int)
+        cx, cy = int(pinch_proj[0]), int(pinch_proj[1])
+
+        # 2) Draw the pinch circle for debugging
+        CLICK_RADIUS = 100  # adjust for a bigger/smaller hit‐area
+        cv2.circle(projector_img, (cx, cy), CLICK_RADIUS, (255,255,0), 3)
+
+        # 3) Build a click‐mask (binary image) for that circle
+        click_mask = np.zeros((proj_h, proj_w), dtype=np.uint8)
+        cv2.circle(click_mask, (cx, cy), CLICK_RADIUS, 255, -1)
+
+        # 4) For each region, build a mask and measure overlap
+        best_target = None
+        best_area = 0
         for (poly_abs, target_screen) in abs_polygons:
-            if point_inside_polygon((ix, iy), poly_abs):
-                now = time.time()
-                if now - last_trigger_time > COOLDOWN:
-                    print(f"Navigating: {current_screen_key} → {target_screen}")
-                    current_screen_key = target_screen
-                    last_trigger_time = now
-                break  # only trigger one region per frame
+            # polygon mask
+            poly_mask = np.zeros_like(click_mask)
+            cv2.fillPoly(poly_mask, [np.array(poly_abs, np.int32)], 255)
+
+            # overlap area
+            overlap = cv2.bitwise_and(click_mask, poly_mask)
+            area = cv2.countNonZero(overlap)
+
+            if area > best_area:
+                best_area = area
+                best_target = target_screen
+
+        # 5) If we found a hotspot with non‐zero overlap, trigger it
+        now = time.time()
+        if best_target is not None and (now - last_trigger_time) > COOLDOWN:
+            print(f"Navigating: {current_screen_key} → {best_target}  (overlap {best_area}px²)")
+            current_screen_key = best_target
+            last_trigger_time = now
+    
 
         # You could also still keep your “alert” buttons if they’re separate from nav:
         # e.g. if the user also wants “trigger_alert('user123')” on some special button,
-        # you could add that as a separate region in the config (with a `target=None` or
-        # a special `action="alert:user123"` and handle it in this loop.)
+        # you could add that as a separate region in the config (with a target=None or
+        # a special action="alert:user123" and handle it in this loop.)
         #
         # Example: If you want “alert” buttons on every screen:
         # regions.append({
@@ -162,14 +222,26 @@ while True:
         #     "action": "alert:user123"
         # })
         #
-        # Then inside the loop you check if region has `"action"` instead of `"target"`,
-        # call `trigger_alert(...)`, and not change `current_screen_key`.
+        # Then inside the loop you check if region has "action" instead of "target",
+        # call trigger_alert(...), and not change current_screen_key.
 
     # 6) Show everything
     cv2.imshow(win_name, projector_img)
     cv2.imshow("Camera", frame)
-    if (cv2.waitKey(1) & 0xFF) == 27:  # ESC to quit
+
+    cv2.imshow(debug_window_name, projector_img)
+    cv2.setMouseCallback(debug_window_name, on_debug_click)
+    key = cv2.waitKey(1) & 0xFF
+    if key == 27:  # ESC to quit
         break
+
+    if key == ord('1'):
+        current_screen_key = "main_1_1"
+    elif key == ord('2'):
+        current_screen_key = "main_2_1"
+    
+
+
 
 cap.release()
 cv2.destroyAllWindows()
