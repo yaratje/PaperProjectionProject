@@ -42,7 +42,7 @@ cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
 cv2.moveWindow(win_name, proj_x, proj_y)
 cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
 
 def rel_to_abs_poly(poly_rel, width, height):
     """
@@ -206,6 +206,8 @@ while True:
         now = time.time()
         if best_target is not None and (now - last_trigger_time) > COOLDOWN:
             print(f"Navigating: {current_screen_key} → {best_target}  (overlap {best_area}px²)")
+            if best_target == "notify":
+                trigger_alert("user123")
             current_screen_key = best_target
             last_trigger_time = now
     

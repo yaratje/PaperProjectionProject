@@ -76,10 +76,22 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_4"
+            },
+            {       
+                  #open 3
+                "polygon_rel": [
+                    [0.7902,  0.7526],
+                    [0.9725,  0.7526],
+                    [0.9725,  0.9538],
+                    [0.7902,  0.9538],
+                ],
+                "label": "notify",
+                "target": "notify"
             }
-
         ]
     },
+
+          
         "machine1_2": {
         "image_path": "nav/machine1_1_2.png",
         "regions": [
