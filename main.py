@@ -1,13 +1,14 @@
 import cv2
 import numpy as np
 import time
+from datetime import datetime, timedelta
 
 from smartWatchSignal import databse_setup, trigger_alert
 from dectectHand import detect_hand_and_gesture, point_inside_polygon
 from navigation_config import NAV_CONFIG          # <— import our data‐driven config
 from navigation import get_projector_screen         # unchanged
-# (Note: you’ll want to rename your original get_nav to something else, 
-# because now our config drives which image to load.)
+from calender import add_event
+
 
 databse_setup()
 
@@ -170,7 +171,7 @@ while True:
 
 
     # 5) Check pointing & navigation
-    print(click_triggered, hand_state, pinch)
+    #print(click_triggered, hand_state, pinch)
     if click_triggered and pinch is not None:
         # 1) Map pinch center to projector coords
         pinch_proj = cv2.perspectiveTransform(
@@ -202,30 +203,17 @@ while True:
                 best_area = area
                 best_target = target_screen
 
-        # 5) If we found a hotspot with non‐zero overlap, trigger it
         now = time.time()
         if best_target is not None and (now - last_trigger_time) > COOLDOWN:
             print(f"Navigating: {current_screen_key} → {best_target}  (overlap {best_area}px²)")
-            if best_target == "notify":
-                trigger_alert("user123")
-            current_screen_key = best_target
+            if best_target == "not_calender":
+                print("trying to add event")
+                add_event("Fix machine 1", datetime.time() + timedelta(days=2), 30)
+            elif best_target == "not_green":
+                trigger_alert("bob")
+            else:
+                current_screen_key = best_target
             last_trigger_time = now
-    
-
-        # You could also still keep your “alert” buttons if they’re separate from nav:
-        # e.g. if the user also wants “trigger_alert('user123')” on some special button,
-        # you could add that as a separate region in the config (with a target=None or
-        # a special action="alert:user123" and handle it in this loop.)
-        #
-        # Example: If you want “alert” buttons on every screen:
-        # regions.append({
-        #     "polygon_rel": [...],
-        #     "label": "User123",
-        #     "action": "alert:user123"
-        # })
-        #
-        # Then inside the loop you check if region has "action" instead of "target",
-        # call trigger_alert(...), and not change current_screen_key.
 
     # 6) Show everything
     cv2.imshow(win_name, projector_img)
@@ -241,6 +229,8 @@ while True:
         current_screen_key = "main_1_1"
     elif key == ord('2'):
         current_screen_key = "main_2_1"
+    elif key == ord('3'):
+        current_screen_key = "main_3_1"
     
 
 

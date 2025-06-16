@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Load your image
-image_path = 'nav/machine1_1_1.png'
+image_path = 'nav/not_green.png'
 img = cv2.imread(image_path)
 img = cv2.resize(img, (1020, 780))
 if img is None:

@@ -25,16 +25,6 @@ NAV_CONFIG = {
                 ],
                 "label": "Go to Machine 2",
                 "target": "machine2_1"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify",
-                "target": "not_calender"
             }
             #more regions
         ]
@@ -96,7 +86,7 @@ NAV_CONFIG = {
                     [0.7902,  0.9538],
                 ],
                 "label": "notify",
-                "target": "not_calender"
+                "target": "not_green"
             }
         ]
     },
@@ -149,16 +139,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_4"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify",
-                "target": "not_calender"
             }
 
         ]
@@ -210,16 +190,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_4"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify",
-                "target": "not_calender"
             }
 
         ]
@@ -271,16 +241,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_1"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify",
-                "target": "not_calender"
             }
 
         ]
@@ -495,7 +455,7 @@ NAV_CONFIG = {
 
         ]
     },
-    #====================================================================================================
+    #
     "main_2_1": {
         "image_path": "nav/main_2_1.png",
         "regions": [
@@ -520,16 +480,6 @@ NAV_CONFIG = {
                 ],
                 "label": "Go to Machine 2",
                 "target": "machine2_2_1"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify_red",
-                "target": "not_green"
             }
             #more regions
         ]
@@ -581,17 +531,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_2_4"
-            },
-            {       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify_red",
-                "target": "not_green"
             }
 
         ]
@@ -643,16 +582,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_2_4"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify_red",
-                "target": "not_green"
             }
 
         ]
@@ -704,16 +633,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_2_4"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify_red",
-                "target": "not_green"
             }
 
         ]
@@ -765,16 +684,6 @@ NAV_CONFIG = {
                 ],
                 "label": "open3",
                 "target": "machine1_2_1"
-            },{       
-                  #open 3
-                "polygon_rel": [
-                    [0.7902,  0.7526],
-                    [0.9725,  0.7526],
-                    [0.9725,  0.9538],
-                    [0.7902,  0.9538],
-                ],
-                "label": "notify_red",
-                "target": "not_green"
             }
 
         ]
@@ -1006,23 +915,7 @@ NAV_CONFIG = {
                 "label": "Back to Main",
                 "target": "main_3_1"
             }
-
-        ]
-    },
-    "not_calender": {
-        "image_path": "nav/not_calender.png",
-        "regions": [
-            {
-                # “back” 
-                "polygon_rel": [
-                    [0.5745,  0.4474],
-                    [0.5971,  0.4513],
-                    [0.598,  0.4731],
-                    [0.5755,  0.4744],
-                ],
-                "label": "Back to Main",
-                "target": "main_3_1"
-            }
+            
 
         ]
     },
@@ -1469,9 +1362,5 @@ NAV_CONFIG = {
 
         ]
     }
-
-
-
-
 
 }

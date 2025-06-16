@@ -173,3 +173,5 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 serviceAccountKey.json
+credentials.json
+token.json
