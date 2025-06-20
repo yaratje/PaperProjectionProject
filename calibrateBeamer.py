@@ -1,5 +1,8 @@
 from screeninfo import get_monitors
 
+CAMERA = 1
+
+
 for i, monitor in enumerate(get_monitors()):
     print(f"Monitor {i}: {monitor}")
 
@@ -65,7 +68,7 @@ def main():
     cv2.imshow(win_name, projected_image)
     print("Projecting points")
 
-    cap = cv2.VideoCapture(1)
+    cap = cv2.VideoCapture(CAMERA)
 
     while True:
         ret, frame = cap.read()

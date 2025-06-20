@@ -10,6 +10,8 @@ from navigation import get_projector_screen         # unchanged
 from calender import add_event
 
 
+CAMERA = 1
+
 databse_setup()
 
 # ArUco / marker‐overlays logic (“last_seen_markers”, H, detector, etc) stays exactly as you had it.
@@ -34,6 +36,7 @@ abs_polygons = []
 screen_cfg = None
 
 
+
 projector = get_projector_screen()
 proj_w, proj_h = projector.width, projector.height
 proj_x, proj_y = projector.x, projector.y
@@ -43,7 +46,7 @@ cv2.namedWindow(win_name, cv2.WND_PROP_FULLSCREEN)
 cv2.moveWindow(win_name, proj_x, proj_y)
 cv2.setWindowProperty(win_name, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 
-cap = cv2.VideoCapture(1)
+cap = cv2.VideoCapture(CAMERA)
 
 def rel_to_abs_poly(poly_rel, width, height):
     """
@@ -149,7 +152,7 @@ while True:
     abs_polygons = []    # store these so we can check pointer collisions
     for region in regions:
         poly_abs = rel_to_abs_poly(region["polygon_rel"], proj_w, proj_h)
-        draw_region(projector_img, poly_abs, region["label"])
+        #draw_region(projector_img, poly_abs, region["label"])
         abs_polygons.append((poly_abs, region["target"]))
 
     # 4) Draw your ArUco/machine overlay (green polygons + labels) on top
@@ -208,9 +211,9 @@ while True:
             print(f"Navigating: {current_screen_key} → {best_target}  (overlap {best_area}px²)")
             if best_target == "not_calender":
                 print("trying to add event")
-                add_event("Fix machine 1", datetime.time() + timedelta(days=2), 30)
+                add_event("Fix machine 1", datetime.now() + timedelta(days=2), 30)
             elif best_target == "not_green":
-                trigger_alert("bob")
+                trigger_alert("user123")
             else:
                 current_screen_key = best_target
             last_trigger_time = now
@@ -229,8 +232,10 @@ while True:
         current_screen_key = "main_1_1"
     elif key == ord('2'):
         current_screen_key = "main_2_1"
+        trigger_alert("user123")
     elif key == ord('3'):
         current_screen_key = "main_3_1"
+        
     
 
 
